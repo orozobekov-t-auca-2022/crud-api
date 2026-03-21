@@ -1,6 +1,7 @@
 import { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct } from "../models/product.js"
 import type { Product } from "../types/types.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { validateUUID } from "../utils/validateUUID.js";
 
 type ProductIdParams = {
   productId: string;
@@ -12,7 +13,7 @@ export const getProds = async (_req: FastifyRequest, reply: FastifyReply) => {
 
 export const getProd = async (req: FastifyRequest<{ Params: ProductIdParams }>, reply: FastifyReply) => {
   const { productId } = req.params;
-  if (!productId) {
+  if (!validateUUID(productId)) {
     return reply.code(400).send({message: 'Invalid UUID'});
   };
   const product = getProductById(productId);
@@ -32,12 +33,12 @@ export const createProd = async (req: FastifyRequest<{ Body: Product }>, reply: 
     return reply.code(400).send({message: 'Invalid input'});
   }
   const newProduct = createProduct(product);
-  reply.code(200).send(newProduct);
+  reply.code(201).send(newProduct);
 }
 
 export const updateProd = async (req: FastifyRequest<{ Params: ProductIdParams, Body: Product }>, reply: FastifyReply) => {
   const { productId } = req.params;
-  if (!productId) {
+  if (!validateUUID(productId)) {
     return reply.code(400).send({message: 'Invalid UUID'});
   };
   const product = updateProduct(productId, req.body);
@@ -49,12 +50,12 @@ export const updateProd = async (req: FastifyRequest<{ Params: ProductIdParams, 
 
 export const deleteProd = async (req: FastifyRequest<{ Params: ProductIdParams }>, reply: FastifyReply) => {
   const { productId } = req.params;
-  if (!productId) {
+  if (!validateUUID(productId)) {
     return reply.code(400).send({message: 'Invalid UUID'});
   };
   const product = deleteProduct(productId);
   if (!product) {
     return reply.code(404).send({message: 'Product not found'});
   };
-  reply.code(200).send(product);
+  reply.code(204).send();
 }
