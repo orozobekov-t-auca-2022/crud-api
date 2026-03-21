@@ -1,10 +1,11 @@
-import { createProduct, deleteProduct, getProduct, getProducts, updateProduct } from "../controllers/controller.js";
+import { createProd, deleteProd, getProd, getProds, updateProd } from "../controllers/controller.js";
+import type { FastifyInstance } from "fastify";
 
 
-export default async function routes(fastify: any) {
-  fastify.get('/api/products', getProducts);
-  fastify.get('/api/products/:productId', getProduct);
-  fastify.post('/api/products', createProduct);
-  fastify.put('/api/products/:productId', updateProduct);
-  fastify.delete('/api/products/:productId', deleteProduct);
+export default async function routes(fastify: FastifyInstance) {
+  fastify.get('/api/products', getProds);
+  fastify.get('/api/products/:productId', getProd);
+  fastify.post('/api/products', createProd);
+  fastify.put('/api/products/:productId', updateProd);
+  fastify.delete('/api/products/:productId', deleteProd);
 }
