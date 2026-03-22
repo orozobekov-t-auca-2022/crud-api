@@ -1,4 +1,10 @@
-import { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct } from "../models/product.js"
+import {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from "../store/store.js";
 import type { Product } from "../types/types.js";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { validateUUID } from "../utils/validateUUID.js";
@@ -8,15 +14,16 @@ type ProductIdParams = {
 };
 
 export const getProds = async (_req: FastifyRequest, reply: FastifyReply) => {
-  reply.code(200).send(getAllProducts());
-}
+  const products = await getAllProducts();
+  reply.code(200).send(products);
+};
 
 export const getProd = async (req: FastifyRequest<{ Params: ProductIdParams }>, reply: FastifyReply) => {
   const { productId } = req.params;
   if (!validateUUID(productId)) {
     return reply.code(400).send({message: 'Invalid UUID'});
   };
-  const product = getProductById(productId);
+  const product = await getProductById(productId);
   if (!product) {
     return reply.code(404).send({message: 'Product not found'});
   };
@@ -32,7 +39,7 @@ export const createProd = async (req: FastifyRequest<{ Body: Product }>, reply: 
     typeof product.inStock !== 'boolean') {
     return reply.code(400).send({message: 'Invalid input'});
   }
-  const newProduct = createProduct(product);
+  const newProduct = await createProduct(product);
   reply.code(201).send(newProduct);
 }
 
@@ -41,7 +48,7 @@ export const updateProd = async (req: FastifyRequest<{ Params: ProductIdParams, 
   if (!validateUUID(productId)) {
     return reply.code(400).send({message: 'Invalid UUID'});
   };
-  const product = updateProduct(productId, req.body);
+  const product = await updateProduct(productId, req.body);
   if (!product) {
     return reply.code(404).send({message: 'Product not found'});
   };
@@ -53,7 +60,7 @@ export const deleteProd = async (req: FastifyRequest<{ Params: ProductIdParams }
   if (!validateUUID(productId)) {
     return reply.code(400).send({message: 'Invalid UUID'});
   };
-  const product = deleteProduct(productId);
+  const product = await deleteProduct(productId);
   if (!product) {
     return reply.code(404).send({message: 'Product not found'});
   };
