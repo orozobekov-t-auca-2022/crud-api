@@ -34,3 +34,7 @@ export function deleteProduct(id: string) {
   products.splice(index, 1);
   return true;
 }
+
+export function clearProducts() {
+  products.length = 0;
+}
